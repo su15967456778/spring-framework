@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!--     使用构造方法注入 -->
+    <bean id="a" class="slf.A">
+        <property name="b" ref="b"/>
+    </bean>
+
+    <!--
+    constructor-arg 定义类构造方法的参数
+    index 定义参数的位置
+    ref 指定某个实例的引用,如果参数是常量值，ref由value代替
+     -->
+
+    <!-- 使用setter方法注入 -->
+    <bean id="b" class="slf.B">
+        <property name="a" ref="a"/>
+    </bean>
+
+</beans>
