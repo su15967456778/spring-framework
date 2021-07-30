@@ -322,7 +322,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		if (logger.isTraceEnabled()) {
 			logger.trace("Loading XML bean definitions from " + encodedResource);
 		}
-		//通过属性来记录已加载的资源
+		//通过属性来记录已加载的资源 ThreadLocal的，当前线程已经加载过的资源
 		Set<EncodedResource> currentResources = this.resourcesCurrentlyBeingLoaded.get();
 
 		if (!currentResources.add(encodedResource)) {
@@ -385,7 +385,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 
-		try {//此处获取xml文件的document对象，这个解析过程是由documentLoader完成的，从string[] - StringResources -resources 最终将resources解析成一个个document文档，根据文档信息封装成Beandifinition对象
+		try {//此处获取xml文件的document对象，这个解析过程是由documentLoader完成的，从string[] - StringResources -resources 最终将resources解析成一个个document文档，根据文档信息封装成BeanDefinition对象
 			Document doc = doLoadDocument(inputSource, resource);
 			int count = registerBeanDefinitions(doc, resource);
 			if (logger.isDebugEnabled()) {
@@ -394,8 +394,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			return count;
 		} catch (BeanDefinitionStoreException ex) {
 			throw ex;
-		}
-		catch (SAXParseException ex) {
+		} catch (SAXParseException ex) {
 			throw new XmlBeanDefinitionStoreException(resource.getDescription(),
 					"Line " + ex.getLineNumber() + " in XML document from " + resource + " is invalid", ex);
 		}
@@ -442,9 +441,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	protected int getValidationModeForResource(Resource resource) {
 		//看看当前的xml文件格式是dtd还是xsd的
 		int validationModeToUse = getValidationMode();
+		//如果手动指定了验证模式，则使用指定的验证模式
 		if (validationModeToUse != VALIDATION_AUTO) {
 			return validationModeToUse;
 		}
+		//如果没有指定验证模式则自动监测
 		int detectedMode = detectValidationMode(resource);
 		if (detectedMode != VALIDATION_AUTO) {
 			return detectedMode;
@@ -505,8 +506,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see BeanDefinitionDocumentReader#registerBeanDefinitions
 	 */
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+		//对xml的beanDefinition进行解析
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
-		int countBefore = getRegistry().getBeanDefinitionCount();
+		int countBefore = getRegistry().getBeanDefinitionCount();//获取当前bean的数量
+		//完成具体的解析过程
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}

@@ -126,7 +126,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
 		BeanDefinitionParserDelegate parent = this.delegate;
-		this.delegate = createDelegate(getReaderContext(), root, parent);
+		this.delegate = createDelegate(getReaderContext(), root, parent);//获得解析器
 
 		if (this.delegate.isDefaultNamespace(root)) {
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
@@ -146,7 +146,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 
 		preProcessXml(root);
-		parseBeanDefinitions(root, this.delegate);
+		parseBeanDefinitions(root, this.delegate);//根据根节点利用解析器解析元素
 		postProcessXml(root);
 
 		this.delegate = parent;
@@ -170,12 +170,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			NodeList nl = root.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++) {
 				Node node = nl.item(i);
-				if (node instanceof Element) {
+				if (node instanceof Element) { //解析
 					Element ele = (Element) node;
-					if (delegate.isDefaultNamespace(ele)) {
+					if (delegate.isDefaultNamespace(ele)) {//默认的命名空间，
 						parseDefaultElement(ele, delegate);
-					}
-					else {
+					} else {
 						delegate.parseCustomElement(ele);
 					}
 				}
@@ -303,19 +302,20 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * and registering it with the registry.
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+		//BeanDefinitionHolder 是beanDefinition的封装，封装了BeanDefinition，bean的名字和别名，用它来完成ioc容器的注册
+		//得到这个BeanDefinitionHolder就意味着BeanDefinition通过BeanDefinitionParser对xml元素按照spring的bean规则进行解析
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
-			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
+			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);//装饰
 			try {
-				// Register the final decorated instance.
+				// Register the final decorated instance.注册beanDefinition
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
-			}
-			catch (BeanDefinitionStoreException ex) {
+			} catch (BeanDefinitionStoreException ex) {
 				getReaderContext().error("Failed to register bean definition with name '" +
 						bdHolder.getBeanName() + "'", ele, ex);
 			}
 			// Send registration event.
-			getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
+			getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));//在容器注册完之后，发送消息
 		}
 	}
 

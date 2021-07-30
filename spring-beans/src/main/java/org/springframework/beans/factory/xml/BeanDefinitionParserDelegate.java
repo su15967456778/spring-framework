@@ -429,11 +429,11 @@ public class BeanDefinitionParserDelegate {
 						"' as bean name and " + aliases + " as aliases");
 			}
 		}
-
+		//判断名字的唯一性
 		if (containingBean == null) {
 			checkNameUniqueness(beanName, aliases, ele);
 		}
-
+		//对bean的元素进行详解
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {
@@ -441,8 +441,7 @@ public class BeanDefinitionParserDelegate {
 					if (containingBean != null) {
 						beanName = BeanDefinitionReaderUtils.generateBeanName(
 								beanDefinition, this.readerContext.getRegistry(), true);
-					}
-					else {
+					} else {
 						beanName = this.readerContext.generateBeanName(beanDefinition);
 						// Register an alias for the plain bean class name, if still possible,
 						// if the generator returned the class name plus a suffix.
@@ -512,17 +511,23 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		try {
+			//创建装在bean信息的AbstractBeanDefinition对象，实际的实现是GenericBeanDefinition
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
-
+			//解析bean标签的其它属性
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
+			//设置description信息
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
-
+			//解析元素
 			parseMetaElements(ele, bd);
+			//解析lookup-method属性
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
+			//解析replace-method属性
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
-
+			//解析构造函数参数
 			parseConstructorArgElements(ele, bd);
+			//解析property子元素
 			parsePropertyElements(ele, bd);
+			//解析qualifier子元素
 			parseQualifierElements(ele, bd);
 
 			bd.setResource(this.readerContext.getResource());
@@ -647,9 +652,11 @@ public class BeanDefinitionParserDelegate {
 	 * Parse the meta elements underneath the given element, if any.
 	 */
 	public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attributeAccessor) {
+		//获取当前所有子元素
 		NodeList nl = ele.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
+			//获取meta
 			if (isCandidateElement(node) && nodeNameEquals(node, META_ELEMENT)) {
 				Element metaElement = (Element) node;
 				String key = metaElement.getAttribute(KEY_ATTRIBUTE);
