@@ -120,7 +120,7 @@ class InternalSpelExpressionParser extends TemplateAwareExpressionParser {
 	@Override
 	protected SpelExpression doParseExpression(String expressionString, @Nullable ParserContext context)
 			throws ParseException {
-
+		//具体的解析工作
 		try {
 			this.expressionString = expressionString;
 			Tokenizer tokenizer = new Tokenizer(expressionString);
