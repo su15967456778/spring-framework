@@ -570,11 +570,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
 				//空方法
+				//子类覆盖做额外的处理，此处我们一般不做任何扩展工作，这个方法具体可以做什么，可以进去看注释，springmvc/springboot里有具体的扩展实现
 				postProcessBeanFactory(beanFactory);
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
 				// Invoke factory processors registered as beans in the context.
-				//执行beanFactoryPostProcessors
+				//执行beanFactoryPostProcessors，调用各种beanFactory处理器，比如替换工作 ${username}
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -736,6 +737,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found.
+		//增加aspectJ的支持，在java中织入有三种方式，分别为编译器织入，类加载器织入，运行时织入
+		//编译器织入指通过特殊的编译器，将切面织入到java中
+		//类加载器织入指通过特殊的类加载器，在类字节码加载入JVM的时候，织入切面，类似cglib
+		//aspectj采用了两种织入方式，特殊编译器和类加载器，类加载器就是下面的load_time_wave
 		if (!NativeDetector.inNativeImage() && beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 			beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
 			// Set a temporary ClassLoader for type matching.
@@ -743,6 +748,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Register default environment beans.
+		// 注册默认的系统环境bean到一级缓存中
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
@@ -773,6 +779,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		//获取当前应用程序上下文beanFactoryPostProcessor变量的值，，并且实例化调用执行所有已经注册的beanFactoryPostProcessor
+		//默认情况下，getBeanFactoryPostProcessor()来获取已经注册的BFPP，但默认是空的
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
