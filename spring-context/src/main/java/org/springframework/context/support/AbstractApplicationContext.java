@@ -712,10 +712,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
-		//添加beanPostProcessor
+		//添加beanPostProcessor 此类用来完成某些aware对象的注入
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
-		//设置忽略自动装配的接口，这些接口的实现是容器是需要容器注入的
-		//所以在使用Autowired进行注入的时候需要对这些接口进行忽略
+		//设置忽略自动装配的接口，这些接口的实现是容器是需要 beanPostProcessor 注入的
+		//所以在使用@Autowired进行注入的时候需要对这些接口进行忽略
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -726,6 +726,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// BeanFactory interface not registered as resolvable type in a plain factory.
 		// MessageSource registered (and found for autowiring) as a bean.
+		//设置几个自动装配的特殊规则，当在进行IOC的时候，如果有多个实现，就按指定的对象注入
 		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);

@@ -11,10 +11,8 @@ import org.springframework.beans.PropertyEditorRegistry;
  * @date 2021/7/30 16:07
  */
 public class AddressPropertyEditorRegister implements PropertyEditorRegistrar {
-
 	@Override
 	public void registerCustomEditors(PropertyEditorRegistry registry) {
 		registry.registerCustomEditor(Address.class, new AddressPropertyEditor());
 	}
-
 }
