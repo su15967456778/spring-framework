@@ -200,7 +200,8 @@ final class PostProcessorRegistrationDelegate {
 		//上面只执行了实现BeanDefinitionRegistryPostProcessor的postprocessor，并没有实现
 		//有priorityOrdered的PostProcessors集合
 		List<BeanFactoryPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
-		//有ordered的PostProcessors集合
+		//有ordered的PostProcessors集合 为什么下面两种存string，上面那种存类
+		//代码改掉还是可以运行的，猜测可能是省空间
 		List<String> orderedPostProcessorNames = new ArrayList<>();
 		//没有order的PostProcessors集合
 		List<String> nonOrderedPostProcessorNames = new ArrayList<>();
