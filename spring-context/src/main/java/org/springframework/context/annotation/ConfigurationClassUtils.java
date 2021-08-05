@@ -85,35 +85,43 @@ abstract class ConfigurationClassUtils {
 	public static boolean checkConfigurationClassCandidate(
 			BeanDefinition beanDef, MetadataReaderFactory metadataReaderFactory) {
 
+		//获取当前className
 		String className = beanDef.getBeanClassName();
 		if (className == null || beanDef.getFactoryMethodName() != null) {
 			return false;
 		}
 
 		AnnotationMetadata metadata;
+		//通过注解注入的bd都是AnnotatedGenericBeanDefinition,实现了AnnotatedBeanDefinition
+		//spring内部的bd是RootBeanDefinition,实现了AbstractBeanDefinition
+		//此处主要用于判断是否属于AnnotationBeanDefinition
 		if (beanDef instanceof AnnotatedBeanDefinition &&
 				className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
 			// Can reuse the pre-parsed metadata from the given BeanDefinition...
+			//从当前bean定义信息中获取元数据信息
 			metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata();
 		}
+		//判断是不是spring中的BeanDefinition
 		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) {
 			// Check already loaded Class if present...
 			// since we possibly can't even load the class file for this Class.
+			//获取BeanClass对象
 			Class<?> beanClass = ((AbstractBeanDefinition) beanDef).getBeanClass();
+			//判断该类是否为指定类的子类
 			if (BeanFactoryPostProcessor.class.isAssignableFrom(beanClass) ||
 					BeanPostProcessor.class.isAssignableFrom(beanClass) ||
 					AopInfrastructureBean.class.isAssignableFrom(beanClass) ||
 					EventListenerFactory.class.isAssignableFrom(beanClass)) {
 				return false;
 			}
+			//根据beanClass对象生成AnnotationMetadata对象
 			metadata = AnnotationMetadata.introspect(beanClass);
 		}
 		else {
 			try {
 				MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(className);
 				metadata = metadataReader.getAnnotationMetadata();
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Could not find class file for introspecting configuration annotations: " +
 							className, ex);
@@ -121,15 +129,16 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-
+		// 判断当前类是否存在@Configuration注解，如果存在
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
+		//如果@Configuration注解同时包括proxyBeanMethods属性，那么去设置configurationClass属性为null
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
+		//如果有@Bean，@Component，@ComponentScan,@Import,@ImportSource注解，则设置lite
 		else if (config != null || isConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
-		}
-		else {
+		} else {
 			return false;
 		}
 
