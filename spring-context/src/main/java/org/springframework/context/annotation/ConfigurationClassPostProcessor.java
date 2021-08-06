@@ -283,6 +283,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
 		//遍历所有beanDefinition的名称
+		//筛选beanDefinition，看看是否被哪些注解给修饰了
 		for (String beanName : candidateNames) {
 			//获取指定名称的BeanDefinition对象
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
