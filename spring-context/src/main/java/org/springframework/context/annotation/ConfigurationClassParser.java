@@ -225,7 +225,7 @@ class ConfigurationClassParser {
 		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
 			return;
 		}
-
+		//第一回进入的时候，configurationClasses的size为0，existingClass为null，在此处判断是否重复import
 		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
 		if (existingClass != null) {
 			if (configClass.isImported()) {
@@ -234,8 +234,7 @@ class ConfigurationClassParser {
 				}
 				// Otherwise ignore new imported config class; existing non-imported class overrides it.
 				return;
-			}
-			else {
+			} else {
 				// Explicit bean definition found, probably replacing an import.
 				// Let's remove the old one and go with the new one.
 				this.configurationClasses.remove(configClass);
@@ -265,26 +264,29 @@ class ConfigurationClassParser {
 	protected final SourceClass doProcessConfigurationClass(
 			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
 			throws IOException {
-
+		//@Configuration继承了@Component
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
 			// Recursively process any member (nested) classes first
+			//递归处理内部类，因为内部类也是一个配置类，配置类上有@Configuration注解，该注解继承@Component，递归调用processMemberClasses
 			processMemberClasses(configClass, sourceClass, filter);
 		}
 
 		// Process any @PropertySource annotations
+		//如果配置类加了@PropertySource注解，那么就会加载Property文件，并将属性添加到spring上下文中
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
 			if (this.environment instanceof ConfigurableEnvironment) {
 				processPropertySource(propertySource);
-			}
-			else {
+			} else {
 				logger.info("Ignoring @PropertySource annotation on [" + sourceClass.getMetadata().getClassName() +
 						"]. Reason: Environment must implement ConfigurableEnvironment");
 			}
 		}
 
 		// Process any @ComponentScan annotations
+		//处理@ComponentScan注解，并扫描包下的所有bean转换成填充后的ConfigurationClass
+		//此处将自定义的bean加载到IOC容器，因为扫描的包可能也添加了@ComponentScan，要进行递归解析
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
 		if (!componentScans.isEmpty() &&
@@ -350,27 +352,32 @@ class ConfigurationClassParser {
 	 */
 	private void processMemberClasses(ConfigurationClass configClass, SourceClass sourceClass,
 			Predicate<String> filter) throws IOException {
-
+		//找到内部类，内部类可能是一个配置集
 		Collection<SourceClass> memberClasses = sourceClass.getMemberClasses();
 		if (!memberClasses.isEmpty()) {
 			List<SourceClass> candidates = new ArrayList<>(memberClasses.size());
+			//循环判断内部类是不是配置类
 			for (SourceClass memberClass : memberClasses) {
 				if (ConfigurationClassUtils.isConfigurationCandidate(memberClass.getMetadata()) &&
 						!memberClass.getMetadata().getClassName().equals(configClass.getMetadata().getClassName())) {
 					candidates.add(memberClass);
 				}
 			}
+			//对配置类进行排序操作
 			OrderComparator.sort(candidates);
+			//遍历符合规则的类
 			for (SourceClass candidate : candidates) {
 				if (this.importStack.contains(configClass)) {
+					//此配置类循环导入，则直接报错
 					this.problemReporter.error(new CircularImportProblem(configClass, this.importStack));
-				}
-				else {
+				} else {
+					//将配置类入栈
 					this.importStack.push(configClass);
 					try {
+						//再次调用解析方法
 						processConfigurationClass(candidate.asConfigClass(configClass), filter);
-					}
-					finally {
+					} finally {
+						//解析完出栈
 						this.importStack.pop();
 					}
 				}
