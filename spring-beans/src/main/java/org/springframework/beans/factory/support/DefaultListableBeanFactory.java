@@ -944,6 +944,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							isEagerInit = (factory instanceof SmartFactoryBean &&
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
+						//是否需要急切初始化
 						if (isEagerInit) {
 							getBean(beanName);
 						}

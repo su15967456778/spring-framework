@@ -260,11 +260,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				if (isSingletonCurrentlyInCreation(beanName)) {
 					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +
 							"' that is not fully initialized yet - a consequence of a circular reference");
-				}
-				else {
+				} else {
 					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
+			//返回对象的实力
 			beanInstance = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
@@ -1883,6 +1883,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
+			//从factoryBean中获取对象
 			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
 		}
 		return object;
