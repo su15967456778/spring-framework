@@ -493,9 +493,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Make sure bean class is actually resolved at this point, and
 		// clone the bean definition in case of a dynamically resolved Class
 		// which cannot be stored in the shared merged bean definition.
+		//锁定class，根据class属性或者name来解析class
 		Class<?> resolvedClass = resolveBeanClass(mbd, beanName);
+		//进行条件筛选，重新复制RootBeanDefinition,并设置BeanClass属性
 		if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
+			//重新创建一个
 			mbdToUse = new RootBeanDefinition(mbd);
+			//并设置属性
 			mbdToUse.setBeanClass(resolvedClass);
 		}
 
@@ -510,6 +514,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			//进行详细的解析过程
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
