@@ -571,8 +571,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			//根据bean使用对应的策略生成实例，如工厂方法，构造函数注入，简单初始化
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
+		//从包装类获取bean
 		Object bean = instanceWrapper.getWrappedInstance();
+		//获取bean的class属性
 		Class<?> beanType = instanceWrapper.getWrappedClass();
+		//如果不等于NullBean类型，那么修改目标类型
 		if (beanType != NullBean.class) {
 			mbd.resolvedTargetType = beanType;
 		}
@@ -1169,26 +1172,32 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
 		// Make sure bean class is actually resolved at this point.
+		//确认要被创建的beanClass类的实例可以被初始化
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
+		//class不为空，且访问权限是public
 
 		if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
 			throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
 		}
-
+		//要么走supplier流程，要么走反射流程
 		Supplier<?> instanceSupplier = mbd.getInstanceSupplier();
 		if (instanceSupplier != null) {
 			return obtainFromSupplier(instanceSupplier, beanName);
 		}
-
+		//如果工厂方法不为空则使用工厂方法初始化
 		if (mbd.getFactoryMethodName() != null) {
 			return instantiateUsingFactoryMethod(beanName, mbd, args);
 		}
 
 		// Shortcut when re-creating the same bean...
+		//标记，防止重复创建同一个bean
 		boolean resolved = false;
+		//是否要自动装配
 		boolean autowireNecessary = false;
+		//如果没有参数
 		if (args == null) {
+			//第一回进不来的，因为构造方法还没被缓存
 			synchronized (mbd.constructorArgumentLock) {
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
 					resolved = true;
