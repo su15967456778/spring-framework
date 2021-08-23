@@ -65,20 +65,27 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 		if (!bd.hasMethodOverrides()) {
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
+				//查看bd对象里是否含有构造方法
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
+				//如果没有
 				if (constructorToUse == null) {
+					//从实例中获取beanClass
 					final Class<?> clazz = bd.getBeanClass();
+					//如果要实例化的bean是一个interface，则抛出异常
 					if (clazz.isInterface()) {
 						throw new BeanInstantiationException(clazz, "Specified class is an interface");
 					}
 					try {
+						//获取系统管理器
 						if (System.getSecurityManager() != null) {
 							constructorToUse = AccessController.doPrivileged(
 									(PrivilegedExceptionAction<Constructor<?>>) clazz::getDeclaredConstructor);
 						}
 						else {
+							//获取无参的构造器
 							constructorToUse = clazz.getDeclaredConstructor();
 						}
+						//获取构造器之后将构造器赋值给bd中的属性
 						bd.resolvedConstructorOrFactoryMethod = constructorToUse;
 					}
 					catch (Throwable ex) {
@@ -86,6 +93,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			//通过反射生成对象
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
