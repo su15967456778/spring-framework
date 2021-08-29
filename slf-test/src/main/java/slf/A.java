@@ -12,7 +12,11 @@ public class A {
 
     private B b;
 
-    public A() {
+	public A(B b) {
+		this.b = b;
+	}
+
+	public A() {
         System.out.println("A 创建了");
     }
 

@@ -1199,14 +1199,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (args == null) {
 			//第一回进不来的，因为构造方法还没被缓存
 			synchronized (mbd.constructorArgumentLock) {
+				//因为一个bean可能会有多个构造函数，所以要根据配置文件中配置的参数或者传入的参数来确定最终调用的构造器函数
+				//因为判断过程中含有比较，所以spring会将解析，确定好的构造函数缓存到beandefinition中的resolvedConstructorOrFactoryMethod里
+				//下次创建的时候直接从这里面曲，避免再次解析
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
 					resolved = true;
 					autowireNecessary = mbd.constructorArgumentsResolved;
 				}
 			}
 		}
+		// 有缓存的方法
 		if (resolved) {
 			if (autowireNecessary) {
+				//构造自动注入
 				return autowireConstructor(beanName, mbd, null, null);
 			}
 			else {
@@ -1217,6 +1222,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Candidate constructors for autowiring?
 		//从bean后置处理器中为自动装配寻找构造方法，有且仅有一个构造或者仅有一个@Autowired注解构造
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
+
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
 			return autowireConstructor(beanName, mbd, ctors, args);
@@ -1347,7 +1353,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param mbd the bean definition for the bean
 	 * @param explicitArgs argument values passed in programmatically via the getBean method,
 	 * or {@code null} if none (-> use constructor argument values from bean definition)
-	 * @return a BeanWrapper for the new instance
+3	 * @return a BeanWrapper for the new instance
 	 * @see #getBean(String, Object[])
 	 */
 	protected BeanWrapper instantiateUsingFactoryMethod(
