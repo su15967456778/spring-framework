@@ -1127,12 +1127,16 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 */
 	@Override
 	public BeanDefinition getMergedBeanDefinition(String name) throws BeansException {
+		//获取真正的beanName
 		String beanName = transformedBeanName(name);
 		// Efficiently check whether bean definition exists in this factory.
 		if (!containsBeanDefinition(beanName) && getParentBeanFactory() instanceof ConfigurableBeanFactory) {
+			//获取当前BeanDefinition中不存在的定义 && 父类beanFactory是ConfigurableBeanFactory
+			//则调用父类的beanFactory去取beanName的mergedBeanDefinition
 			return ((ConfigurableBeanFactory) getParentBeanFactory()).getMergedBeanDefinition(beanName);
 		}
 		// Resolve merged bean definition locally.
+		//在当前BeanFactory中解析beanName的mergedBeanDefinition
 		return getMergedLocalBeanDefinition(beanName);
 	}
 
@@ -1377,22 +1381,26 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			throws BeanDefinitionStoreException {
 
 		synchronized (this.mergedBeanDefinitions) {
+			//用于存储bd的RootBeanDefinition
 			RootBeanDefinition mbd = null;
 			RootBeanDefinition previous = null;
 
 			// Check with full lock now in order to enforce the same merged instance.
+			//检查对应的beanName是否存在于mergedBeanDefinitions中
 			if (containingBd == null) {
 				mbd = this.mergedBeanDefinitions.get(beanName);
 			}
-
+			//如果缓存中没有
 			if (mbd == null || mbd.stale) {
 				previous = mbd;
+				//如果bd的parent为空，则无需合并
 				if (bd.getParentName() == null) {
 					// Use copy of given root bean definition.
+					//如果bd的类型为RootBeanDefinition，则bd的MergedBeanDefinition就是本身，直接克隆一个副本
 					if (bd instanceof RootBeanDefinition) {
 						mbd = ((RootBeanDefinition) bd).cloneBeanDefinition();
-					}
-					else {
+					} else {
+						//否则，bd作为参数，构建一个RootBeanDefinition
 						mbd = new RootBeanDefinition(bd);
 					}
 				}
@@ -1415,13 +1423,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 												"': cannot be resolved without a ConfigurableBeanFactory parent");
 							}
 						}
-					}
-					catch (NoSuchBeanDefinitionException ex) {
+					} catch (NoSuchBeanDefinitionException ex) {
 						throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanName,
 								"Could not resolve parent bean definition '" + bd.getParentName() + "'", ex);
 					}
 					// Deep copy with overridden values.
+
+					//使用父类定义一个bdd
 					mbd = new RootBeanDefinition(pbd);
+					//使用bdd覆盖父定义
 					mbd.overrideFrom(bd);
 				}
 
