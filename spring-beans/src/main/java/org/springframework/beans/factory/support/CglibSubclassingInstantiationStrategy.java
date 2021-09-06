@@ -116,12 +116,14 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 		public Object instantiate(@Nullable Constructor<?> ctor, Object... args) {
 			Class<?> subclass = createEnhancedSubclass(this.beanDefinition);
 			Object instance;
+			//如果构造器等于空，直接通过反射创建实例
 			if (ctor == null) {
 				instance = BeanUtils.instantiateClass(subclass);
-			}
-			else {
+			} else {
 				try {
+					//通过cglib对象来根据参数类型获取对应的构造器
 					Constructor<?> enhancedSubclassConstructor = subclass.getConstructor(ctor.getParameterTypes());
+					//通过构造器来获取对象
 					instance = enhancedSubclassConstructor.newInstance(args);
 				}
 				catch (Exception ex) {

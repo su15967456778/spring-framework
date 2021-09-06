@@ -312,6 +312,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
+				//如果存在dependsOn的类，那么优先加载依赖的类
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					//如果存在依赖，则需要递归实例化依赖的bean
@@ -1540,11 +1541,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			if (mbd.hasBeanClass()) {
 				return mbd.getBeanClass();
 			}
+			//判断是否有安全管理器
 			if (System.getSecurityManager() != null) {
 				return AccessController.doPrivileged((PrivilegedExceptionAction<Class<?>>)
 						() -> doResolveBeanClass(mbd, typesToMatch), getAccessControlContext());
-			}
-			else {
+			} else {
+				//详细的处理过程
 				return doResolveBeanClass(mbd, typesToMatch);
 			}
 		}

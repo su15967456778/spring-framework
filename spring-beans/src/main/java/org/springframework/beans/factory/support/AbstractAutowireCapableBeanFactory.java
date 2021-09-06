@@ -505,10 +505,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Prepare method overrides.
 		//验证及其准备覆盖的方法 lookup-method replace-method,当需要创建的对象中包含了lookup和replace的时候，会产生覆盖操作
+		//单例模式下引用一个原型模式的bean，此时就需要引用lookup  replace标签
 		try {
 			mbdToUse.prepareMethodOverrides();
-		}
-		catch (BeanDefinitionValidationException ex) {
+		} catch (BeanDefinitionValidationException ex) {
 			throw new BeanDefinitionStoreException(mbdToUse.getResourceDescription(),
 					beanName, "Validation of method overrides failed", ex);
 		}
