@@ -8,7 +8,7 @@
 		</bean>-->
 
 	<!--     使用构造方法注入 -->
-	<bean id="a" class="slf.A">
+	<bean id="a" class="slf.A" init-method="init">
 		<property name="b" ref="b"/>
 	</bean>
 
