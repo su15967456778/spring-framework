@@ -515,7 +515,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
-			//让beanPostProcessor来返回代理对象真正的实例，应用实例化前的前置处理器
+			//给 BeanPostProcessors 一个机会 让beanPostProcessor来返回代理对象真正的实例，应用实例化前的前置处理器
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;

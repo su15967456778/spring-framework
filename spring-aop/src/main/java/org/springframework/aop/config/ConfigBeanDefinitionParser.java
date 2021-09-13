@@ -102,12 +102,12 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 		CompositeComponentDefinition compositeDef =
 				new CompositeComponentDefinition(element.getTagName(), parserContext.extractSource(element));
 		parserContext.pushContainingComponent(compositeDef);
-
+		//注册自动代理模式创建器 三级缓存那里使用的代理创建器 AspectJAwareAdvisorAutoProxy
 		configureAutoProxyCreator(parserContext, element);
-
+		//解析aop:config子节点下的pointcut，advisor，aspect
 		List<Element> childElts = DomUtils.getChildElements(element);
 		for (Element elt: childElts) {
-			String localName = parserContext.getDelegate().getLocalName(elt);
+ 			String localName = parserContext.getDelegate().getLocalName(elt);
 			if (POINTCUT.equals(localName)) {
 				parsePointcut(elt, parserContext);
 			}
