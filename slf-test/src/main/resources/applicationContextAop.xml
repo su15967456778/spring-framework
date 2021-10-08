@@ -15,12 +15,13 @@
 
 
 	<aop:config>
-		<aop:aspect ref="logutil">
-			<aop:pointcut id="myPoint" expression="execution(Integer slf.aop.MyCaculate.*(..))"/>
-			<aop:before method="before" pointcut-ref="myPoint"></aop:before>
+		<aop:aspect ref="logutil"> <!-- 切面 -->
+			<aop:pointcut id="myPoint" expression="execution(Integer slf.aop.MyCaculate.*(..))"/> <!-- 连接点 -->
+			<aop:before method="before" pointcut-ref="myPoint"></aop:before>  <!-- 切点 -->
 			<aop:around method="around" pointcut-ref="myPoint"></aop:around>
 			<aop:after method="after" pointcut-ref="myPoint"></aop:after>
-			<aop:after-returning method="afterReturning" pointcut-ref="myPoint" returning="result"></aop:after-returning>
+			<aop:after-returning method="afterReturning" pointcut-ref="myPoint"
+								 returning="result"></aop:after-returning>
 			<aop:after-throwing method="afterThrowing" pointcut-ref="myPoint" throwing="e"></aop:after-throwing>
 		</aop:aspect>
 	</aop:config>

@@ -318,7 +318,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 
 		try {
 			this.parseState.push(new AdviceEntry(parserContext.getDelegate().getLocalName(adviceElement)));
-
+			//解析advice节点中的method属性，并包装为MethodLocatingFactoryBean对象
 			// create the method factory bean
 			RootBeanDefinition methodDefinition = new RootBeanDefinition(MethodLocatingFactoryBean.class);
 			methodDefinition.getPropertyValues().add("targetBeanName", aspectName);

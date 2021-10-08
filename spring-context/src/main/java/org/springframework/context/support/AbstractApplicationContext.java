@@ -642,8 +642,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Switch to active.
 		//创建一下开启时间
 		this.startupDate = System.currentTimeMillis();
+		//关闭状态设置为false
 		this.closed.set(false);
+		//激活状态设置为true
 		this.active.set(true);
+
 
 		if (logger.isDebugEnabled()) {
 			if (logger.isTraceEnabled()) {
@@ -674,6 +677,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Allow for the collection of early ApplicationEvents,
 		// to be published once the multicaster is available...
+		//准备监听器事件的集合
 		this.earlyApplicationEvents = new LinkedHashSet<>();
 	}
 
@@ -778,7 +782,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * Instantiate and invoke all registered BeanFactoryPostProcessor beans,
 	 * respecting explicit order if given.
-	 * <p>Must be called before singleton instantiation.
+	 * <p>Must be called before singleton instantiation. 一定要在实例化之前
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		//获取当前应用程序上下文beanFactoryPostProcessor变量的值，，并且实例化调用执行所有已经注册的beanFactoryPostProcessor
