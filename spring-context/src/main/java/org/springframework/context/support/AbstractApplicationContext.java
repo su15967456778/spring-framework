@@ -593,6 +593,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				//模板方法，在容器刷新的时候可以自定义逻辑，不同的Spring容器做不同的事情。
 				onRefresh();
 
 				// Check for listener beans and register them.
@@ -785,7 +786,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation. 一定要在实例化之前
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		//获取当前应用程序上下文beanFactoryPostProcessor变量的值，，并且实例化调用执行所有已经注册的beanFactoryPostProcessor
+		//获取当前应用程序上下文beanFactoryPostProcessor变量的值，并且实例化调用执行所有已经注册的beanFactoryPostProcessor
 		//默认情况下，getBeanFactoryPostProcessor()来获取已经注册的BFPP，但默认是空的
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 

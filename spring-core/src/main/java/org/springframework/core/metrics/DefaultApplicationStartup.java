@@ -71,11 +71,11 @@ class DefaultApplicationStartup implements ApplicationStartup {
 			return this;
 		}
 
+
 		@Override
 		public void end() {
 
 		}
-
 
 		static class DefaultTags implements StartupStep.Tags {
 
