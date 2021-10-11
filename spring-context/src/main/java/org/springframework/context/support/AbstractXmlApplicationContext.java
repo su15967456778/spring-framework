@@ -82,6 +82,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 		// Create a new XmlBeanDefinitionReader for the given BeanFactory.
 		// 适配器模式
 		//创建一个xml的beanDefinitionReader，并通过回调设置到beanFactory中
+		//beanFactory和applicationContext没有办法直接读取xml，就交给beanDefinitionReader进行，这就是适配器模式
 		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
 
 		// Configure the bean definition reader with this context's
