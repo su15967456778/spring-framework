@@ -309,7 +309,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		if (bdHolder != null) {
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);//装饰
 			try {
-				// Register the final decorated instance.注册beanDefinition
+				// Register the final decorated instance.
+				// 向ioc容器注册解析得到的beanDefinition
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			} catch (BeanDefinitionStoreException ex) {
 				getReaderContext().error("Failed to register bean definition with name '" +
