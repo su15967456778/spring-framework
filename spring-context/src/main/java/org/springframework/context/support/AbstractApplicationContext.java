@@ -713,10 +713,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		//设置beanFactory的类加载器为当前context的类加载器
 		beanFactory.setBeanClassLoader(getClassLoader());
 		if (!shouldIgnoreSpel) {
-			//设置beanfactory的表达式语言处理器  处理类->解析类->配置类
+			//设置beanfactory的表达式语言处理器
+			//处理类->解析类->配置类
 			beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
 		}
-		//为beanFactory增加一个默认的PropertyEditor，这个主要是对bean的属性设置管理的一个工具类 属性编辑类，比如date的format
+		//为beanFactory增加一个默认的PropertyEditor
+		//这个主要是对bean的属性设置管理的一个工具类 属性编辑类，比如date的format
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.

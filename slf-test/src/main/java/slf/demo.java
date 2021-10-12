@@ -6,8 +6,7 @@ import slfEditor.Customer;
 public class demo {
 
 	public static void main(String[] args) throws Exception {
-		ClassPathXmlApplicationContext classPathXmlApplicationContext
-				= new ClassPathXmlApplicationContext("applicationContext.xml");
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 
 		A a = (A) classPathXmlApplicationContext.getBean(A.class);
 		B b = classPathXmlApplicationContext.getBean(B.class);
