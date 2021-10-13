@@ -748,7 +748,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found.
-		//增加aspectJ的支持，在java中织入有三种方式，分别为编译器织入，类加载器织入，运行时织入
+		//增加aspectJ的支持
+		//在java中织入有三种方式，分别为编译器织入，类加载器织入，运行时织入
 		//编译器织入指通过特殊的编译器，将切面织入到java中
 		//类加载器织入指通过特殊的类加载器，在类字节码加载入JVM的时候，织入切面，类似cglib
 		//aspectj采用了两种织入方式，特殊编译器和类加载器，类加载器就是下面的load_time_wave
