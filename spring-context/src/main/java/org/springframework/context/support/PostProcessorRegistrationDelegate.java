@@ -191,6 +191,7 @@ final class PostProcessorRegistrationDelegate {
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let the bean factory post-processors apply to them!
 		//获取实现BeanFactoryPostProcessor的所有类
+		//到目前为止，所有BeanDefinitionRegistryPostProcessor已经全部实现完毕了，接下来开始BeanFactoryPostProcessor的类的处理
 		String[] postProcessorNames =
 				beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);
 
