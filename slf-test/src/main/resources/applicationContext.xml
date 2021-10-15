@@ -24,6 +24,8 @@
 	</bean>
 
 	<bean class="slf.MyBeanFactoryPostProcessor"></bean>
+	<bean class="slf.MyBeanDefinitionRegistryPostProcessor"></bean>
+
 
 	<bean id="customer" class="slfEditor.Customer">
 		<property name="name" value="张三"/>
