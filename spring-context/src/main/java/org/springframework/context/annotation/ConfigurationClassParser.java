@@ -168,8 +168,8 @@ class ConfigurationClassParser {
 
 
 	public void parse(Set<BeanDefinitionHolder> configCandidates) {
-		for (BeanDefinitionHolder holder : configCandidates) {
-			BeanDefinition bd = holder.getBeanDefinition();
+		for (BeanDefinitionHolder holder : configCandidates) {//遍历
+			BeanDefinition bd = holder.getBeanDefinition();//获取bd
 			try {
 				//根据类型不同，使用不同的解析方法
 				if (bd instanceof AnnotatedBeanDefinition) {
@@ -222,10 +222,11 @@ class ConfigurationClassParser {
 
 
 	protected void processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter) throws IOException {
-		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
+		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {//是否跳过解析
 			return;
 		}
-		//第一回进入的时候，configurationClasses的size为0，existingClass为null，在此处判断是否重复import
+		//第一回进入的时候，configurationClasses的size为0，existingClass为null，
+		// 在此处判断是否重复import 如果一个类被重复导入两次，两次都属于import则合并导入类，如果配置类不是被导入的，则移除旧的使用新的配置类
 		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
 		if (existingClass != null) {
 			if (configClass.isImported()) {
@@ -243,12 +244,17 @@ class ConfigurationClassParser {
 		}
 
 		// Recursively process the configuration class and its superclass hierarchy.
+		//处理配置类，由于配置类可能存在父类，所有需要将configClass变成sourceClass去解析，然后返回sourceClass的父类
+		//如果此时父类为空，则不会进行while解析，如果父类不为空，则会循环进行解析
+		//SourceClass的意义：简单的包装类，目的是为了统一的方式去处理带有注解的类，不管这些类是如何加载的
+		//如果无法理解，可以当做一个黑盒，不影响看spring源码的流程
 		SourceClass sourceClass = asSourceClass(configClass, filter);
 		do {
+			//解析各种注解
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
 		}
 		while (sourceClass != null);
-
+		//将解析的配置类存储起来，这样回到parse方法时，能取到值
 		this.configurationClasses.put(configClass, configClass);
 	}
 
@@ -294,6 +300,8 @@ class ConfigurationClassParser {
 			//通过上一步扫描包，有可能上一步扫描包出来的bean可能也添加了@ComponentScan
 			//这里需要遍历一次，进行递归，直到最后一层
 			for (AnnotationAttributes componentScan : componentScans) {
+				//解析ComponentScan和@ComponentScans配置扫描的包所包含的类
+				//扫描这个包及子包下的class，然后解析成beanDefinition
 				// The config class is annotated with @ComponentScan -> perform the scan immediately
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());

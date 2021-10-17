@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!--	<bean id="myFactoryBean" class="slf.MyFactoryBean">
 		</bean>-->
+
+	<context:component-scan base-package="slf"></context:component-scan>
 
 	<!--     使用构造方法注入 -->
 	<bean id="a" class="slf.A" init-method="init">
 		<property name="b" ref="b"/>
 	</bean>
+
 
 	<!--
 	constructor-arg 定义类构造方法的参数
