@@ -306,7 +306,7 @@ class ConfigurationClassParser {
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
 				// Check the set of scanned definitions for any further config classes and parse recursively if needed
-				for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
+				for (BeanDefinitionHolder holder : scannedBeanDefinitions) {//扫描出来的包也可能包含了@ComponentScan,所以需要再扫描一次。
 					BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
 					if (bdCand == null) {
 						bdCand = holder.getBeanDefinition();
