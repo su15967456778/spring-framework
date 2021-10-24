@@ -265,7 +265,7 @@ final class PostProcessorRegistrationDelegate {
 		// a bean is created during BeanPostProcessor instantiation, i.e. when
 		// a bean is not eligible for getting processed by all BeanPostProcessors.
 		//记录下目标记录数
-		//为什么要+1 是因为此方法的最后会添加一个BeanPostProcessorChecker
+		//为什么要+1 是因为此方法的最后会添加一个ApplicationListenerDetector
 		int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
 		//添加beanPostProcessorChecker(主要用于记录信息)
 		beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
