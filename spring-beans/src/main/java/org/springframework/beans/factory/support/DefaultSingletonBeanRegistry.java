@@ -237,7 +237,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
 				//记录当前对象加载状态
-				//记录创建中的状态是为了
+				//记录创建中的状态是为了标记这个对象是否完成，只有完成了才能对这个对象进行获取
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
