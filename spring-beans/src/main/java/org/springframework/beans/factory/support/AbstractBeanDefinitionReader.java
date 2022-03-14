@@ -86,10 +86,10 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		this.registry = registry;
 
 		// Determine ResourceLoader to use.
+		//匹配一些处理器
 		if (this.registry instanceof ResourceLoader) {
 			this.resourceLoader = (ResourceLoader) this.registry;
-		}
-		else {
+		} else {
 			this.resourceLoader = new PathMatchingResourcePatternResolver();
 		}
 
@@ -216,7 +216,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 			throw new BeanDefinitionStoreException(
 					"Cannot load bean definitions from location [" + location + "]: no ResourceLoader available");
 		}
-
+		//this.resourcePatternResolver = getResourcePatternResolver(); 可以搜这一行代码，就是在这里赋值的
 		if (resourceLoader instanceof ResourcePatternResolver) {
 			// Resource pattern matching available.
 			try {

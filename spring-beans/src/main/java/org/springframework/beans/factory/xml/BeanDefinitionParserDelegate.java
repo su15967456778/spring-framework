@@ -412,12 +412,12 @@ public class BeanDefinitionParserDelegate {
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
-		String id = ele.getAttribute(ID_ATTRIBUTE);
-		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
-
+		String id = ele.getAttribute(ID_ATTRIBUTE);//解析id属性
+		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);//解析name属性
+		//如果bean有别名，则分别解析
 		List<String> aliases = new ArrayList<>();
 		if (StringUtils.hasLength(nameAttr)) {
-			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
+			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);//用','分割的name，进行切割
 			aliases.addAll(Arrays.asList(nameArr));
 		}
 
@@ -429,11 +429,11 @@ public class BeanDefinitionParserDelegate {
 						"' as bean name and " + aliases + " as aliases");
 			}
 		}
-		//判断名字的唯一性
+		//判断名字的唯一性，一个文件的id，只能是唯一的
 		if (containingBean == null) {
 			checkNameUniqueness(beanName, aliases, ele);
 		}
-		//对bean的元素进行详解 比如init-method
+		//对bean的元素进行详解 比如init-method，这一步完成后，xml该有的属性值全都解析完成了
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {

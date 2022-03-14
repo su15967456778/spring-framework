@@ -173,7 +173,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				Node node = nl.item(i);
 				if (node instanceof Element) { //解析
 					Element ele = (Element) node;
-					if (delegate.isDefaultNamespace(ele)) {//默认的命名空间，
+					if (delegate.isDefaultNamespace(ele)) {//默认的命名空间，import,bean,alias这些，可以解析，如果是其它标签，需要额外的解析器
 						parseDefaultElement(ele, delegate);
 					} else {
 						delegate.parseCustomElement(ele);
