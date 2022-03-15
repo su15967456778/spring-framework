@@ -82,7 +82,8 @@ final class PostProcessorRegistrationDelegate {
 			//类型转换
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 			//此时要做一个区分，BeanDefinitionRegistryPostProcessor是BeanFactoryPostProcessor的子类
-			//BeanFactoryPostProcessor主要针对的对象是BeanFactory，BeanDefinitionRegistryPostProcessor主要针对的对象是BeanDefinition
+			//BeanFactoryPostProcessor主要针对的对象是BeanFactory，
+			//BeanDefinitionRegistryPostProcessor主要针对的对象是BeanDefinition
 			//存放BeanFactoryPostProcessor的集合类
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
 			//存放BeanDefinitionRegistryPostProcessor的集合
@@ -136,7 +137,8 @@ final class PostProcessorRegistrationDelegate {
 
 			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
 			//调用所有实现Ordered接口的BeanDefinitionRegistryPostProcessor实现类
-			//找到所有实现BeanDefinitionRegistryPostProcessor接口bean的beanName 为什么要重新获取
+			//找到所有实现BeanDefinitionRegistryPostProcessor接口bean的beanName
+			//为什么要重新获取 ：
 			//上面调用invoke方法的时候，可能会新增一些 BeanDefinitionRegistryPostProcessor
 			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
