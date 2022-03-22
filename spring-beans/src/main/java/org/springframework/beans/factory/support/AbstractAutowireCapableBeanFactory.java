@@ -499,7 +499,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
 			//重新创建一个
 			mbdToUse = new RootBeanDefinition(mbd);
-			//并设置属性
+			//并设置属性 把单个的字符串改成class
 			mbdToUse.setBeanClass(resolvedClass);
 		}
 
@@ -1341,7 +1341,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						getAccessControlContext());
 			}
 			else {
-				//获取实例化对象
+				//获取实例化对象 获取实例化策略并实例化对象
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, this);
 			}
 			//装饰者模式 意义在于使用属性编辑器ConversionService Editor

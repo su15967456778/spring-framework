@@ -313,7 +313,7 @@ class ConfigurationClassParser {
 					}
 					//判断是否是一个配置类，设置full或者lite属性
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
-						parse(bdCand.getBeanClassName(), holder.getBeanName());
+						parse(bdCand.getBeanClassName(), holder.getBeanName());//递归
 					}
 				}
 			}
